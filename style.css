@@ -1,0 +1,36 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border-radius: 2px;
+  /* user-select: none; */
+}
+
+body {
+  background-color: #22092c;
+}
+
+table {
+  background-color: #f05941;
+  border-radius: 4px;
+}
+
+td {
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
+  background-color: #872341;
+  /* border: 1px solid black; */
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+td.border {
+  background-color: #be3144;
+}
+
+#main {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
