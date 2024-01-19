@@ -40,59 +40,87 @@ function main() {
     let head = null;
     let headCell = [];
 
-    let refresh = setInterval(() => {
-      headCell[0] != undefined
-        ? (headCell[1] = headCell[0])
-        : (headCell[1] = false);
-
-      console.log("updated,", `direction is: ${direction}`);
-      // console.table(boardArr);
-      for (let i = 0; i < boardArr.length; i++) {
-        const row = boardArr[i];
-        for (let j = 0; j < row.length; j++) {
-          const cell = row[j];
-          if (cell == 1) {
-            head = document.getElementById(`${i},${j}`);
-            headCell[0] = [i, j];
-          }
+    for (let i = 0; i < boardArr.length; i++) {
+      const row = boardArr[i];
+      for (let j = 0; j < row.length; j++) {
+        const cell = row[j];
+        if (cell == 1) {
+          head = document.getElementById(`${i},${j}`);
+          headCell = [i, j];
         }
       }
+    }
 
-      //todo: change first line, kind of
+    let apple = placeApple();
+    // console.log(apple);
+
+    boardArr[apple[0]][apple[1]] = -1;
+    document
+      .getElementById(`${apple[0]},${apple[1]}`)
+      .classList.add("snake", "apple");
+
+    function placeApple() {
+      let applePos = [];
+      let apple = Math.floor(Math.random() * size * size);
+      applePos[0] = Math.floor(apple / size) + 1;
+      applePos[1] = (apple % size) + 1;
+      if (boardArr[applePos[0]][applePos[1]] > 0) {
+        console.log("snek here");
+        applepos = placeApple();
+      } else {
+        return applePos;
+      }
+    }
+
+    let refresh = setInterval(() => {
+      console.log("updated,", `direction is: ${direction}`);
+      // console.table(boardArr);
+
+      // console.log(boardArr[headCell[0]][headCell[1]]);
+      // boardArr[headCell[0]][headCell[1]] == -1 ? snakeLength++ : null;
+      // console.log(snakeLength);
+
+      //todo: change first line, i guess
       switch (direction) {
         case "up":
-          boardArr[headCell[0][0]][headCell[0][1]] = 0;
-          boardArr[headCell[0][0] - 1][headCell[0][1]] = 1;
+          boardArr[headCell[0]][headCell[1]] = 0;
+          boardArr[headCell[0] - 1][headCell[1]] = 1;
           break;
 
         case "down":
-          boardArr[headCell[0][0]][headCell[0][1]] = 0;
-          boardArr[headCell[0][0] + 1][headCell[0][1]] = 1;
+          boardArr[headCell[0]][headCell[1]] = 0;
+          boardArr[headCell[0] + 1][headCell[1]] = 1;
           break;
 
         case "right":
-          boardArr[headCell[0][0]][headCell[0][1]] = 0;
-          boardArr[headCell[0][0]][headCell[0][1] + 1] = 1;
+          boardArr[headCell[0]][headCell[1]] = 0;
+          boardArr[headCell[0]][headCell[1] + 1] = 1;
           break;
 
         case "left":
-          boardArr[headCell[0][0]][headCell[0][1]] = 0;
-          boardArr[headCell[0][0]][headCell[0][1] - 1] = 1;
+          boardArr[headCell[0]][headCell[1]] = 0;
+          boardArr[headCell[0]][headCell[1] - 1] = 1;
           break;
 
         default:
           break;
       }
 
+      document.getElementById(`${headCell[0]},${headCell[1]}`).classList = "";
+
+      for (let i = 0; i < boardArr.length; i++) {
+        for (let j = 0; j < boardArr[i].length; j++) {
+          boardArr[i][j] > 0 ? boardArr[i][j]++ : null;
+          if (boardArr[i][j] == 2) {
+            head = document.getElementById(`${i},${j}`);
+            headCell = [i, j];
+          }
+        }
+      }
+
       // console.log(head);
       head.classList = "";
-      head.classList.add(`snake`);
-      head.classList.add(`head-${direction}`);
-      if (headCell[1] != false) {
-        document.getElementById(
-          `${headCell[1][0]},${headCell[1][1]}`
-        ).classList = "";
-      }
+      head.classList.add(`snake`, `head-${direction}`);
     }, 727);
   }
 
@@ -139,17 +167,17 @@ function main() {
     "head-up",
     "head-down",
     "head-right",
-    "head - left",
+    "head-left",
     "body-vert",
-    "body - hor",
+    "body-hor",
     "body-up-right",
     "body-up-left",
     "body-down-right",
-    "body - down - left",
+    "body-down-left",
     "tail-up",
     "tail-down",
     "tail-right",
-    "tail - left",
+    "tail-left",
     "apple",
   ];
 }
