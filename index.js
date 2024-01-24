@@ -14,6 +14,8 @@ function main() {
       const td = document.createElement("td");
       boardArr[i][j] = 0;
       i == 8 ? (j == 8 ? (boardArr[i][j] = 1) : null) : null;
+      i == 8 ? (j == 7 ? (boardArr[i][j] = 2) : null) : null;
+      i == 8 ? (j == 6 ? (boardArr[i][j] = 3) : null) : null;
 
       switch (true) {
         case i == 0:
@@ -34,30 +36,56 @@ function main() {
   //* snake move
   let direction = undefined;
   let started = false;
-  let snakeLength = 1;
+  let snakeLength = 3;
 
   function start() {
     let head = null;
     let headCell = [];
 
-    for (let i = 0; i < boardArr.length; i++) {
-      const row = boardArr[i];
-      for (let j = 0; j < row.length; j++) {
-        const cell = row[j];
-        if (cell == 1) {
-          head = document.getElementById(`${i},${j}`);
-          headCell = [i, j];
+    let tail = null;
+    let tailDir = "right";
+
+    let body = [];
+
+    checkSnake();
+
+    function checkSnake() {
+      let bodyParts = 0;
+      for (let i = 0; i < boardArr.length; i++) {
+        for (let j = 0; j < boardArr[i].length; j++) {
+          boardArr[i][j] > 0 ? boardArr[i][j]++ : null;
+          boardArr[i][j] > snakeLength + 1 ? (boardArr[i][j] = 0) : null;
+
+          if (boardArr[i][j] == 2) {
+            head = document.getElementById(`${i},${j}`);
+            headCell = [i, j];
+          }
+          if (boardArr[i][j] == snakeLength + 1) {
+            tail = document.getElementById(`${i},${j}`);
+          }
+          if (boardArr[i][j] > 2 && boardArr[i][j] < snakeLength + 1) {
+            if (bodyParts == 0) {
+              body.unshift({
+                pos: [i, j],
+                dir: (function () {
+                  if (direction == "up" && tailDir == "right") {
+                    return "up-left";
+                  }
+                  // if (direction) {
+
+                  // }
+                })(),
+                cell: document.getElementById(`${i},${j}`),
+              });
+            }
+            bodyParts++;
+          }
         }
       }
     }
 
-    let apple = placeApple();
+    placeApple();
     // console.log(apple);
-
-    boardArr[apple[0]][apple[1]] = -1;
-    document
-      .getElementById(`${apple[0]},${apple[1]}`)
-      .classList.add("snake", "apple");
 
     function placeApple() {
       let applePos = [];
@@ -68,37 +96,42 @@ function main() {
         console.log("snek here");
         applepos = placeApple();
       } else {
-        return applePos;
+        boardArr[applePos[0]][applePos[1]] = -1;
+        document
+          .getElementById(`${applePos[0]},${applePos[1]}`)
+          .classList.add("snake", "apple");
       }
+    }
+    function ateApple() {
+      placeApple();
+      snakeLength++;
     }
 
     let refresh = setInterval(() => {
-      console.log("updated,", `direction is: ${direction}`);
+      console.log(
+        "updated,",
+        `direction is: ${direction}, length: ${snakeLength}`
+      );
       // console.table(boardArr);
 
-      // console.log(boardArr[headCell[0]][headCell[1]]);
-      // boardArr[headCell[0]][headCell[1]] == -1 ? snakeLength++ : null;
-      // console.log(snakeLength);
-
-      //todo: change first line, i guess
       switch (direction) {
         case "up":
-          boardArr[headCell[0]][headCell[1]] = 0;
+          boardArr[headCell[0] - 1][headCell[1]] < 0 ? ateApple() : null;
           boardArr[headCell[0] - 1][headCell[1]] = 1;
           break;
 
         case "down":
-          boardArr[headCell[0]][headCell[1]] = 0;
+          boardArr[headCell[0] + 1][headCell[1]] < 0 ? ateApple() : null;
           boardArr[headCell[0] + 1][headCell[1]] = 1;
           break;
 
         case "right":
-          boardArr[headCell[0]][headCell[1]] = 0;
+          boardArr[headCell[0]][headCell[1] + 1] < 0 ? ateApple() : null;
           boardArr[headCell[0]][headCell[1] + 1] = 1;
           break;
 
         case "left":
-          boardArr[headCell[0]][headCell[1]] = 0;
+          boardArr[headCell[0]][headCell[1] - 1] < 0 ? ateApple() : null;
           boardArr[headCell[0]][headCell[1] - 1] = 1;
           break;
 
@@ -106,21 +139,25 @@ function main() {
           break;
       }
 
-      document.getElementById(`${headCell[0]},${headCell[1]}`).classList = "";
+      head.classList = "";
+      // typeof tail != null ? (tail.classList = "") : null;
+      tail.classList = "";
 
-      for (let i = 0; i < boardArr.length; i++) {
-        for (let j = 0; j < boardArr[i].length; j++) {
-          boardArr[i][j] > 0 ? boardArr[i][j]++ : null;
-          if (boardArr[i][j] == 2) {
-            head = document.getElementById(`${i},${j}`);
-            headCell = [i, j];
-          }
-        }
-      }
+      checkSnake();
+      // console.table(boardArr);
 
       // console.log(head);
       head.classList = "";
       head.classList.add(`snake`, `head-${direction}`);
+
+      console.log(tail);
+      tail.classList = "";
+      tail.classList.add("snake", `tail-${tailDir}`);
+
+      for (part of body) {
+        part.cell.classList = "";
+        part.cell.classList.add(`snake`, `body-${part.dir}`);
+      }
     }, 727);
   }
 
