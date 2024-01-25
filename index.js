@@ -64,6 +64,7 @@ function main() {
             tail = document.getElementById(`${i},${j}`);
           }
           if (boardArr[i][j] > 2 && boardArr[i][j] < snakeLength + 1) {
+            body.pop();
             if (bodyParts == 0) {
               body.unshift({
                 pos: [i, j],
@@ -150,10 +151,11 @@ function main() {
       head.classList = "";
       head.classList.add(`snake`, `head-${direction}`);
 
-      console.log(tail);
+      // console.log(tail);
       tail.classList = "";
       tail.classList.add("snake", `tail-${tailDir}`);
 
+      console.table(body);
       for (part of body) {
         part.cell.classList = "";
         part.cell.classList.add(`snake`, `body-${part.dir}`);
