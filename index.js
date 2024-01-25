@@ -62,6 +62,34 @@ function main() {
           }
           if (boardArr[i][j] == snakeLength + 1) {
             tail = document.getElementById(`${i},${j}`);
+            console.group();
+            console.warn(snakeLength);
+            console.log(boardArr[i - 1][j]);
+            console.log(boardArr[i + 1][j]);
+            console.log(boardArr[i][j + 1]);
+            console.log(boardArr[i][j - 1]);
+            console.groupEnd();
+            switch (true) {
+              case boardArr[i - 1][j] == snakeLength - 1:
+                console.warn("duoa", boardArr[i - 1][j]);
+                tailDir = "up";
+                break;
+              case boardArr[i + 1][j] == snakeLength - 1:
+                console.warn("duoa", boardArr[i + 1][j]);
+                tailDir = "down";
+                break;
+              case boardArr[i][j + 1] == snakeLength - 1:
+                console.warn("duoa", boardArr[i][j + 1]);
+                tailDir = "right";
+                break;
+              case boardArr[i][j - 1] == snakeLength - 1:
+                console.warn("duoa", boardArr[i][j - 1]);
+                tailDir = "left";
+                break;
+
+              default:
+                break;
+            }
           }
           if (boardArr[i][j] > 2 && boardArr[i][j] < snakeLength + 1) {
             body.pop();
