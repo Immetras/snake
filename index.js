@@ -23,6 +23,7 @@ function main() {
         case i == size + 1:
         case j == size + 1:
           td.className = "border";
+          boardArr[i][j] = "border";
           break;
         default:
           td.id = `${i},${j}`;
@@ -50,40 +51,29 @@ function main() {
     checkSnake();
 
     function checkSnake() {
-      let bodyParts = 0;
+      body = [];
       for (let i = 0; i < boardArr.length; i++) {
         for (let j = 0; j < boardArr[i].length; j++) {
-          boardArr[i][j] > 0 ? boardArr[i][j]++ : null;
-          boardArr[i][j] > snakeLength + 1 ? (boardArr[i][j] = 0) : null;
+          boardArr[i][j] > snakeLength ? (boardArr[i][j] = 0) : null;
 
-          if (boardArr[i][j] == 2) {
+          if (boardArr[i][j] == 1) {
             head = document.getElementById(`${i},${j}`);
             headCell = [i, j];
           }
-          if (boardArr[i][j] == snakeLength + 1) {
+
+          if (boardArr[i][j] == snakeLength) {
             tail = document.getElementById(`${i},${j}`);
-            console.group();
-            console.warn(snakeLength);
-            console.log(boardArr[i - 1][j]);
-            console.log(boardArr[i + 1][j]);
-            console.log(boardArr[i][j + 1]);
-            console.log(boardArr[i][j - 1]);
-            console.groupEnd();
             switch (true) {
               case boardArr[i - 1][j] == snakeLength - 1:
-                console.warn("duoa", boardArr[i - 1][j]);
                 tailDir = "up";
                 break;
               case boardArr[i + 1][j] == snakeLength - 1:
-                console.warn("duoa", boardArr[i + 1][j]);
                 tailDir = "down";
                 break;
               case boardArr[i][j + 1] == snakeLength - 1:
-                console.warn("duoa", boardArr[i][j + 1]);
                 tailDir = "right";
                 break;
               case boardArr[i][j - 1] == snakeLength - 1:
-                console.warn("duoa", boardArr[i][j - 1]);
                 tailDir = "left";
                 break;
 
@@ -91,24 +81,78 @@ function main() {
                 break;
             }
           }
-          if (boardArr[i][j] > 2 && boardArr[i][j] < snakeLength + 1) {
-            body.pop();
-            if (bodyParts == 0) {
-              body.unshift({
-                pos: [i, j],
-                dir: (function () {
-                  if (direction == "up" && tailDir == "right") {
+
+          if (boardArr[i][j] > 1 && boardArr[i][j] < snakeLength) {
+            body.push({
+              pos: [i, j],
+              dir: (function () {
+                if (
+                  boardArr[i - 1][j] == boardArr[i][j] - 1 ||
+                  boardArr[i - 1][j] == boardArr[i][j] + 1
+                ) {
+                  if (
+                    boardArr[i][j + 1] == boardArr[i][j] - 1 ||
+                    boardArr[i][j + 1] == boardArr[i][j] + 1
+                  ) {
+                    return "up-right";
+                  }
+                  if (
+                    boardArr[i][j - 1] == boardArr[i][j] - 1 ||
+                    boardArr[i][j - 1] == boardArr[i][j] + 1
+                  ) {
                     return "up-left";
                   }
-                  // if (direction) {
-
-                  // }
-                })(),
-                cell: document.getElementById(`${i},${j}`),
-              });
-            }
-            bodyParts++;
+                  if (
+                    boardArr[i + 1][j] == boardArr[i][j] - 1 ||
+                    boardArr[i + 1][j] == boardArr[i][j] + 1
+                  ) {
+                    return "vert";
+                  }
+                }
+                if (
+                  boardArr[i + 1][j] == boardArr[i][j] - 1 ||
+                  boardArr[i + 1][j] == boardArr[i][j] + 1
+                ) {
+                  if (
+                    boardArr[i][j + 1] == boardArr[i][j] - 1 ||
+                    boardArr[i][j + 1] == boardArr[i][j] + 1
+                  ) {
+                    return "down-right";
+                  }
+                  if (
+                    boardArr[i][j - 1] == boardArr[i][j] - 1 ||
+                    boardArr[i][j - 1] == boardArr[i][j] + 1
+                  ) {
+                    return "down-left";
+                  }
+                  if (
+                    boardArr[i + 1][j] == boardArr[i][j] - 1 ||
+                    boardArr[i + 1][j] == boardArr[i][j] + 1
+                  ) {
+                    return "vert";
+                  }
+                }
+                if (
+                  boardArr[i][j - 1] == boardArr[i][j] - 1 ||
+                  boardArr[i][j - 1] == boardArr[i][j] + 1
+                ) {
+                  if (
+                    boardArr[i][j + 1] == boardArr[i][j] - 1 ||
+                    boardArr[i][j + 1] == boardArr[i][j] + 1
+                  ) {
+                    return "hor";
+                  }
+                }
+              })(),
+              cell: document.getElementById(`${i},${j}`),
+            });
           }
+        }
+      }
+
+      for (let i = 0; i < boardArr.length; i++) {
+        for (let j = 0; j < boardArr[i].length; j++) {
+          boardArr[i][j] > 0 ? boardArr[i][j]++ : null;
         }
       }
     }
@@ -135,10 +179,13 @@ function main() {
       placeApple();
       snakeLength++;
     }
+    // window.addEventListener("keydown", (e) =>
+    //   e.key == "c" ? clearInterval(refresh) : null
+    // );
 
     let refresh = setInterval(() => {
       console.log(
-        "updated,",
+        "updated;",
         `direction is: ${direction}, length: ${snakeLength}`
       );
       // console.table(boardArr);
@@ -188,7 +235,7 @@ function main() {
         part.cell.classList = "";
         part.cell.classList.add(`snake`, `body-${part.dir}`);
       }
-    }, 727);
+    }, 331);
   }
 
   document.addEventListener("keydown", move);
