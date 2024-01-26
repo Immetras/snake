@@ -4,6 +4,17 @@ function main() {
   const size = parseInt(
     prompt(`Select grid size: \n(5-35 is recommended)`, 20)
   );
+  const difficulty = parseInt(
+    prompt(`Select diffulty: \n(0-6 is available)`, 2)
+  );
+  if (difficulty > 6) {
+    if (size < 120) {
+      alert("High difficulty\nReloading");
+      location.reload();
+    }
+  }
+  let diffTimeOut = 331 - difficulty * 50;
+  console.log(diffTimeOut);
 
   //* generate10
   const board = document.getElementById("board");
@@ -261,7 +272,7 @@ function main() {
         part.cell.classList = "";
         part.cell.classList.add(`snake`, `body-${part.dir}`);
       }
-    }, 277);
+    }, diffTimeOut);
   }
 
   document.addEventListener("keydown", move);
