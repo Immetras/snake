@@ -1,8 +1,11 @@
 function main() {
   console.log("loaded");
 
-  //* generate
-  const size = 15;
+  const size = parseInt(
+    prompt(`Select grid size: \n(5-35 is recommended)`, 20)
+  );
+
+  //* generate10
   const board = document.getElementById("board");
   let boardArr = [];
 
@@ -12,10 +15,14 @@ function main() {
 
     for (let j = 0; j < size + 2; j++) {
       const td = document.createElement("td");
-      boardArr[i][j] = 0;
-      i == 8 ? (j == 8 ? (boardArr[i][j] = 1) : null) : null;
-      i == 8 ? (j == 7 ? (boardArr[i][j] = 2) : null) : null;
-      i == 8 ? (j == 6 ? (boardArr[i][j] = 3) : null) : null;
+      // boardArr[i][j] = 0;ds
+      // i == Math.ceil(size / 2)
+      //  ? j == Math.ceil(size / 2)
+      //   ? (boardArr[i][j] = 1)
+      //     : null
+      //   : null;
+      // i == 8 ? (j == 7 ? (boardArr[i][j] = 2) : null) : null;
+      // i == 8 ? (j == 6 ? (boardArr[i][j] = 3) : null) : null;
 
       switch (true) {
         case i == 0:
@@ -33,18 +40,25 @@ function main() {
     }
     board.appendChild(tr);
   }
+  boardArr[Math.ceil(size / 2)][Math.ceil(size / 2)] = 1;
 
   //* snake move
   let direction = undefined;
   let started = false;
-  let snakeLength = 3;
+  let snakeLength = 2;
 
   function start() {
+    if (direction == "left") {
+      boardArr[Math.ceil(size / 2)][Math.ceil(size / 2) + 1] = 2;
+    } else {
+      boardArr[Math.ceil(size / 2)][Math.ceil(size / 2) - 1] = 2;
+    }
+
     let head = null;
     let headCell = [];
 
     let tail = null;
-    let tailDir = "right";
+    let tailDir = null;
 
     let body = [];
 
@@ -182,6 +196,10 @@ function main() {
     // window.addEventListener("keydown", (e) =>
     //   e.key == "c" ? clearInterval(refresh) : null
     // );
+    function lost() {
+      alert(`You lost.\nYour score was: ${snakeLength}. \nPlay again?`);
+      location.reload();
+    }
 
     let refresh = setInterval(() => {
       console.log(
@@ -192,21 +210,29 @@ function main() {
 
       switch (direction) {
         case "up":
+          boardArr[headCell[0] - 1][headCell[1]] > 1 ? lost() : null;
+          boardArr[headCell[0] - 1][headCell[1]] == "border" ? lost() : null;
           boardArr[headCell[0] - 1][headCell[1]] < 0 ? ateApple() : null;
           boardArr[headCell[0] - 1][headCell[1]] = 1;
           break;
 
         case "down":
+          boardArr[headCell[0] + 1][headCell[1]] > 1 ? lost() : null;
+          boardArr[headCell[0] + 1][headCell[1]] == "border" ? lost() : null;
           boardArr[headCell[0] + 1][headCell[1]] < 0 ? ateApple() : null;
           boardArr[headCell[0] + 1][headCell[1]] = 1;
           break;
 
         case "right":
+          boardArr[headCell[0]][headCell[1] + 1] > 1 ? lost() : null;
+          boardArr[headCell[0]][headCell[1] + 1] == "border" ? lost() : null;
           boardArr[headCell[0]][headCell[1] + 1] < 0 ? ateApple() : null;
           boardArr[headCell[0]][headCell[1] + 1] = 1;
           break;
 
         case "left":
+          boardArr[headCell[0]][headCell[1] - 1] > 1 ? lost() : null;
+          boardArr[headCell[0]][headCell[1] - 1] == "border" ? lost() : null;
           boardArr[headCell[0]][headCell[1] - 1] < 0 ? ateApple() : null;
           boardArr[headCell[0]][headCell[1] - 1] = 1;
           break;
@@ -230,12 +256,12 @@ function main() {
       tail.classList = "";
       tail.classList.add("snake", `tail-${tailDir}`);
 
-      console.table(body);
+      // console.table(body);
       for (part of body) {
         part.cell.classList = "";
         part.cell.classList.add(`snake`, `body-${part.dir}`);
       }
-    }, 331);
+    }, 277);
   }
 
   document.addEventListener("keydown", move);
@@ -244,54 +270,35 @@ function main() {
     switch (e.key) {
       case "w":
       case "ArrowUp":
-        !started ? start() : null;
-        started = true;
         console.log("up");
         direction = "up";
+        !started ? start() : null;
+        started = true;
         break;
       case "s":
       case "ArrowDown":
-        !started ? start() : null;
-        started = true;
         console.log("down");
         direction = "down";
+        !started ? start() : null;
+        started = true;
         break;
       case "d":
       case "ArrowRight":
-        !started ? start() : null;
-        started = true;
         console.log("right");
         direction = "right";
+        !started ? start() : null;
+        started = true;
         break;
       case "a":
       case "ArrowLeft":
-        !started ? start() : null;
-        started = true;
         console.log("left");
         direction = "left";
+        !started ? start() : null;
+        started = true;
         break;
 
       default:
         break;
     }
   }
-
-  //? snek
-  const snakeParts = [
-    "head-up",
-    "head-down",
-    "head-right",
-    "head-left",
-    "body-vert",
-    "body-hor",
-    "body-up-right",
-    "body-up-left",
-    "body-down-right",
-    "body-down-left",
-    "tail-up",
-    "tail-down",
-    "tail-right",
-    "tail-left",
-    "apple",
-  ];
 }
